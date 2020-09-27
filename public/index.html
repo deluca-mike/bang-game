@@ -1,0 +1,1507 @@
+<html>
+  <header>
+    <title>Big Bang</title>
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <script src="jquery-3.5.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="main.css">
+  </header>
+
+  <body>
+    <div id="background"></div>
+
+    <div id="landing">
+      <img id="title" src="assets/images/logo.png"/>
+
+      <div class="form section" id="joinForm">
+        <label for="playerName">Name:</label>
+        <input type="text" id="playerName" name="playerName" maxlength="10" placeholder="Enter Your Name">
+        <label for="gameId">Room Code:</label>
+        <input type="text" id="gameId" name="gameId" maxlength="4" placeholder="Skip If Creating Game">
+        <div class="buttons">
+          <button class="button" type="button" id="createGame">Create Game</button>
+          <button class="button" type="button" id="joinGame">Join Game</button>
+        </div>
+      </div>
+
+      <div class="form section" id="startForm" style="display: none;">
+        <div class="instructions">Welcome to Big Bang.<br/>This game supports 2 to 8 players.<br/>Your game code is</div>
+        <div class="gameCode"></div>
+        <div class="instructions">Start the game when everyone is in the room.</div>
+        <div class="buttons">
+          <button class="button" type="button" id="startGame">Start Game</button>
+          <button class="button" type="button" id="customRules">Custom Rules</button>
+        </div>
+      </div>
+
+      <div class="form section" id="rulesForm" style="display: none;">
+        <label>Dodge City Expansion:</label>
+        <button id="rule_expansionDodgeCity" class="button" type="button">No</button>
+
+        <label>Include Promotional Skills:</label>
+        <button id="rule_expansionPromo" class="button" type="button">No</button>
+
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+
+        <label>Enable Roles:</label>
+        <button id="rule_roles" class="button" type="button">Yes</button>
+
+        <label>Sheriff In The Deck:</label>
+        <button id="rule_sheriffInDeck" class="button" type="button">No</button>
+
+        <label>Outlaws Know Each Other:</label>
+        <button id="rule_outlawsKnowEachOther" class="button" type="button">Yes</button>
+
+        <label id="label_canJailSheriff">Allow Jailing Sheriff:</label>
+        <input id="rule_canJailSheriff" class="slider" type="range" min="0" max="2" value="0">
+
+        <label>Allow Killing Sheriff (Outside of 1v1):</label>
+        <button id="rule_canKillSheriff" class="button" type="button">Yes</button>
+
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+
+        <label>Allow Beers During 1v1:</label>
+        <button id="rule_beersDuringOneOnOne" class="button" type="button">No</button>
+
+        <label>Allow Jail During 1v1:</label>
+        <button id="rule_jailDuringOneOnOne" class="button" type="button">Yes</button>
+
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+
+        <label id="label_maxQueuedPerTurn">Can Queue 0 Bangs Per Turn:</label>
+        <input id="rule_maxQueuedPerTurn" class="slider" type="range" min="0" max="10" value="0">
+
+        <label id="label_maxQueued">Up to 0 Queued Bangs:</label>
+        <input id="rule_maxQueued" class="slider" type="range" min="0" max="10" value="0">
+
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+
+        <label id="label_startingSkills">Start With 1 Skill:</label>
+        <input id="rule_startingSkills" class="slider" type="range" min="0" max="2" value="1">
+
+        <label>Skills In The Deck:</label>
+        <button id="rule_skillsInDeck" class="button" type="button">No</button>
+
+        <label id="label_minSkills">Min of 1 Skill:</label>
+        <input id="rule_minSkills" class="slider" type="range" min="0" max="2" value="1">
+
+        <label id="label_maxSkills">Max of 1 Skill:</label>
+        <input id="rule_maxSkills" class="slider" type="range" min="0" max="3" value="1">
+
+        <label id="label_maxSkillsPerTurn">Can Apply 0 Skills Per Turn:</label>
+        <input id="rule_maxSkillsPerTurn" class="slider" type="range" min="0" max="6" value="0">
+
+        <label>Replace Skills Placed In Turn:</label>
+        <button id="rule_turnoverSkillsInTurn" class="button" type="button">No</button>
+
+        <label>Draw Card When Playing Skill:</label>
+        <button id="rule_drawWithSkill" class="button" type="button">No</button>
+
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+
+        <label id="label_beerDiscardFrequency">Never Remove Beers:</label>
+        <input id="rule_beerDiscardFrequency" class="slider" type="range" min="-3" max="5" value="0">
+
+        <label>Sheriff Starts:</label>
+        <button id="rule_sheriffStarts" class="button" type="button">No</button>
+
+        <label id="label_startingHandSize">Auto Starting Hand Size:</label>
+        <input id="rule_startingHandSize" class="slider" type="range" min="-1" max="10" value="-1">
+
+        <label>Crescendo Starting Hands:</label>
+        <button id="rule_crescendoDeal" class="button" type="button">No</button>
+
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+
+        <label>Attack Instigator is Responsible:</label>
+        <button id="rule_initiatorIsResponsible" class="button" type="button">Yes</button>
+
+        <label>Pickup Powers on Last Life:</label>
+        <button id="rule_fadeawayDraw" class="button" type="button">No</button>
+
+        <label>Pickup Powers During Reactions:</label>
+        <button id="rule_pickupsDuringReaction" class="button" type="button">No</button>
+
+        <label>Lucky Duke Applies to Pickups:</label>
+        <button id="rule_alwaysLuckyDuke" class="button" type="button">No</button>
+
+        <label>Beers At Full Does Nothing:</label>
+        <button id="rule_wasteBeers" class="button" type="button">Yes</button>
+
+        <label>Allow Harming Self:</label>
+        <button id="rule_canHarmSelf" class="button" type="button">Yes</button>
+
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+
+        <label id="label_rewardSize">3 Cards for Killing Someone:</label>
+        <input id="rule_rewardSize" class="slider" type="range" min="0" max="5" value="3">
+
+        <label id="label_dynamiteDamage">Dynamite Does 3 Damage:</label>
+        <input id="rule_dynamiteDamage" class="slider" type="range" min="1" max="5" value="3">
+
+        <label>Dynamite Explodes Hand/Equipment First:</label>
+        <button id="rule_betterDynamite" class="button" type="button">No</button>
+
+        <label>Deflect with Dynamite:</label>
+        <button id="rule_dynamiteAsOptionalDeflect" class="button" type="button">No</button>
+
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+      </div>
+
+      <div id="avatars"></div>
+    </div>
+
+    <div id="playArea" style="display: none;">
+      <div id="others"></div>
+
+      <div id="middle">
+        <div id="eventsContainer" class="section"></div>
+        <div id="deck" class="section"></div>
+        <div id="placeholder1" class="section" style="visibility: hidden;"></div>
+      </div>
+
+      <div id="self"></div>
+
+      <div id="controls" class="section">
+        <div id="viewer" style="display: none;"></div>
+
+        <div id="generalStore" style="display: none;">
+          <div class="instructions">General Store, Pick 1</div>
+          <div class="pickCards"></div>
+        </div>
+
+        <div id="pickFromDraw" style="display: none;">
+          <div class="instructions">Discard a Card</div>
+          <div class="pickCards"></div>
+        </div>
+
+        <div id="selections" style="display: none;"></div>
+
+        <div id="buttons">
+          <button class="button" type="button" id="playButton">Play</button>
+          <button class="button" type="button" id="discardButton">Discard</button>
+          <button class="button" type="button" id="passButton">Pass</button>
+          <button class="button" type="button" id="optionsButton">Options</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="overlay" style="display: none;">
+      <div id="warning" class="modal section" style="display: none;"></div>
+
+      <div id="options" class="modal section" style="display: none;">
+        <label>Game Code:</label>
+        <div class="gameCode"></div>
+
+        <label>Music:</label>
+        <input type="range" min="0" max="100" value="50" class="slider" id="musicVolume">
+
+        <label>Sound FX:</label>
+        <input type="range" min="0" max="100" value="50" class="slider" id="soundEffectsVolume">
+
+        <label>Hover Viewer:</label>
+        <button id="hoverViewerToggle" class="button" type="button">Off</button>
+
+        <label>Harm Yourself:</label>
+        <button id="harmSelfToggle" class="button" type="button">Off</button>
+
+        <div class="buttons">
+          <button id="optionsBack" class="button" type="button">Ok</button>
+          <button id="optionsQuit" class="button" type="button">Quit</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      // TODO: highlight or add buttons to the queueables that are playable this turn
+
+      const cookies = {
+        getItem: function (sKey) {
+          return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
+        },
+        setItem: function (sKey, sValue, vEnd, sPath, sDomain, bSecure) {
+          if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return false; }
+
+          var sExpires = "";
+
+          if (vEnd) {
+            switch (vEnd.constructor) {
+              case Number:
+                sExpires = vEnd === Infinity ? "; expires=Fri, 31 Dec 9999 23:59:59 GMT" : "; max-age=" + vEnd;
+                break;
+              case String:
+                sExpires = "; expires=" + vEnd;
+                break;
+              case Date:
+                sExpires = "; expires=" + vEnd.toUTCString();
+                break;
+            }
+          }
+
+          document.cookie = encodeURIComponent(sKey) + "=" + encodeURIComponent(sValue) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
+
+          return true;
+        },
+        removeItem: function (sKey, sPath, sDomain) {
+          if (!sKey || !this.hasItem(sKey)) { return false; }
+
+          document.cookie = encodeURIComponent(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + ( sDomain ? "; domain=" + sDomain : "") + ( sPath ? "; path=" + sPath : "");
+
+          return true;
+        },
+        hasItem: function (sKey) {
+          return (new RegExp("(?:^|;\\s*)" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+        },
+        keys: function () {
+          var aKeys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, "").split(/\s*(?:\=[^;]*)?;\s*/);
+
+          for (let nIdx = 0; nIdx < aKeys.length; nIdx++) {
+            aKeys[nIdx] = decodeURIComponent(aKeys[nIdx]);
+          }
+
+          return aKeys;
+        }
+      };
+
+      const debounce = (callback, delay = 250, timeout) => (...args) => {
+        clearTimeout(timeout);
+
+        if (!timeout) callback(...args);
+
+        timeout = setTimeout(() => timeout = null, delay)
+      };
+
+      const sortByName = (a, b) => (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
+
+      const sortByTypeThenName = (a, b) => (a.type < b.type) ? -1 : (a.type > b.type) ? 1 : (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
+
+      const createSoundPool = (baseSound, quantity) => {
+        const soundPool = {
+          clips: [],
+          lastClip: 0,
+          volume: 1
+        };
+
+        for (let i = 1; i <= quantity; i++) {
+          const clip = new Audio(`assets/sounds/${baseSound}${i}.mp3`)
+          clip.addEventListener("ended", () => clip.currentTime = 0);
+          soundPool.clips.push(clip);
+        }
+
+        soundPool.play = () => {
+          soundPool.clips[soundPool.lastClip].volume = soundPool.volume;
+          soundPool.clips[soundPool.lastClip].play();
+          soundPool.lastClip = (soundPool.lastClip + 1) % soundPool.clips.length;
+        };
+
+        return soundPool;
+      };
+
+      const state = {
+        enums: {},
+        gameId: null,
+        gameState: {
+          version: null,
+          started: false,
+          ended: false,
+          recentEvents: [],
+          turn: {
+            reacting: [],
+            generalStore: { currentPicker: null, cards: [] },
+          },
+          players: []
+        },
+        self: {
+          name: null
+        },
+        selections: {
+          cards: [],
+          equipping: false,
+          targets: [],
+        },
+        previousEvents: [],
+        options: {
+          music: parseFloat((cookies.getItem('music') || '0.5')),
+          soundFx: parseFloat((cookies.getItem('soundFx') || '0.5')),
+          hoverViewer: (cookies.getItem('hoverViewer') || 'true') === 'true',
+          harmSelf: (cookies.getItem('harmSelf') || 'false') === 'true',
+        },
+      };
+
+      const mimicSound = new Audio(`assets/sounds/yourMimic.mp3`);
+      mimicSound.addEventListener("ended", () => mimicSound.currentTime = 0);
+
+      const sounds = {
+        yourDraw: createSoundPool('yourDraw', 7),
+        yourMove: createSoundPool('yourMove', 6),
+        yourMimic: mimicSound,
+      };
+
+      const themeSong = new Audio('assets/sounds/theme.mp3');
+      themeSong.loop = true;
+      themeSong.volume = state.options.music;
+
+      const cleanLog = (label, data) => {
+        console.log('');
+        console.log(label);
+        console.log(data);
+      };
+
+      const warn = message => {
+        clearSelections();
+        clearTargets();
+
+        $("#options").hide();
+        $("#warning").empty();
+        $("#warning").append(`<div>${message}</div>`);
+
+        const okButton = $('<button class="button" type="button">OK</button>');
+
+        okButton.click(() => {
+          $("#overlay, #warning").hide();
+          $("#warning").empty();
+        });
+
+        $("#warning").append(okButton);
+        $("#overlay, #warning").show();
+      };
+
+      const loadSounds = () => {
+        const { enums: { Events } } = state;
+
+        Object.values(Events).forEach(eventName => {
+          switch (eventName) {
+            case Events.beer: return sounds[eventName] = createSoundPool(eventName, 4);
+            case Events.discard: return sounds[eventName] = createSoundPool(eventName, 2);
+            case Events.draw: return sounds[eventName] = createSoundPool(eventName, 10);
+            case Events.equipped: return sounds[eventName] = createSoundPool(eventName, 4);
+            case Events.hit: return sounds[eventName] = createSoundPool(eventName, 5);
+            case Events.missed: return sounds[eventName] = createSoundPool(eventName, 10);
+            case Events.plateMissed: return sounds[eventName] = createSoundPool(eventName, 5);
+            case Events.ponyexpress: return sounds[eventName] = createSoundPool(eventName, 2);
+            case Events.shotC: return sounds[eventName] = createSoundPool(eventName, 5);
+            case Events.shotD: return sounds[eventName] = createSoundPool(eventName, 5);
+            case Events.shotR: return sounds[eventName] = createSoundPool(eventName, 5);
+            case Events.shotS: return sounds[eventName] = createSoundPool(eventName, 6);
+            case Events.shotV: return sounds[eventName] = createSoundPool(eventName, 4);
+            case Events.shotW: return sounds[eventName] = createSoundPool(eventName, 10);
+            case Events.stagecoach: return sounds[eventName] = createSoundPool(eventName, 2);
+            case Events.whisky: return sounds[eventName] = createSoundPool(eventName, 2);
+            case Events.info:
+            case Events.initialized:
+            case Events.nothing:
+            case Events.turnEnded:
+              return;
+            default:
+              const sound = new Audio(`assets/sounds/${eventName}.mp3`);
+              sound.addEventListener("ended", () => sound.currentTime = 0);
+              sounds[eventName] = sound;
+              return;
+          }
+        });
+      };
+
+      const getReactingName = () => {
+        if (!state.gameState.turn.reacting.length) return null;
+
+        return state.gameState.turn.reacting[0].reactorName;
+      };
+
+      const createCardElem = (card, callbacks = {}, options = {}) => {
+        const { playCallback, selectCallback, targetCallback, addTargetCallback, drawCallback, mimicCallback, discardCallback } = callbacks;
+        const { margin = 0, angle = 0, stackable = true, hoverView = true, grayscale = false } = options;
+
+        const stackableCardElem = $(`<div class="stackableCard"></div>`);
+
+        if (angle) stackableCardElem.css('transform', `rotate(${angle}deg)`);
+
+        if (margin) stackableCardElem.css('margin-right', `${margin}px`);
+
+        stackableCardElem.toggleClass('stacking', stackable);
+        stackableCardElem.toggleClass('grayscale', grayscale);
+
+        const cardElem = $(`<img class="card card-${card.index}" src="assets/images/${card.name}.png">`);
+        stackableCardElem.append(cardElem);
+
+        if (card.suit && card.rank) {
+          const { enums: { Suits } } = state;
+
+          const suitSymbol = card.suit === Suits.clubs ? '&clubs;' :
+            card.suit === Suits.diamonds ? '&diams;' :
+            card.suit === Suits.hearts ? '&hearts;' :
+            '&spades;';
+
+          const suitColor = [Suits.hearts, Suits.diamonds].includes(card.suit) ? 'red' : 'black';
+
+          const suitAndRankElem = $(`<div class="suitOverlay" style="color: ${suitColor}"><div>${card.rank}</div><div>${suitSymbol}</div></div>`);
+
+          stackableCardElem.append(suitAndRankElem);
+        }
+
+        if (hoverView) stackableCardElem.hover(() => viewCard(card), unviewCard);
+
+        if (!playCallback && !selectCallback && !targetCallback && !addTargetCallback && !drawCallback && !mimicCallback && !discardCallback) return stackableCardElem;
+
+        const hoverElem = $(`<div class="hoverOverlay"></div>`);
+        hoverElem.append(Object.keys(callbacks).filter(callbackName => callbacks[callbackName]).map(callbackName => {
+          const elem = callbackName === 'playCallback' ? $(`<div class="playOverlay">Play</div>`) :
+            callbackName === 'selectCallback' ? $(`<div class="selectOverlay">Sel</div>`) :
+            callbackName === 'targetCallback' ? $(`<div class="selectTargetOverlay">Targ</div>`) :
+            callbackName === 'addTargetCallback' ? $(`<div class="addTargetOverlay">Add</div>`) :
+            callbackName === 'drawCallback' ? $(`<div class="drawOverlay">Draw</div>`) :
+            callbackName === 'mimicCallback' ? $(`<div class="mimicOverlay">Mim</div>`) :
+            callbackName === 'discardCallback' ? $(`<div class="discardOverlay">Disc</div>`) :
+            $(`<div class="unknownOverlay">Ukn</div>`);
+
+          elem.on('dblclick click', event => {
+            event.stopPropagation();
+            callbacks[callbackName]();
+          });
+
+          return elem;
+        }));
+
+        stackableCardElem.append(hoverElem);
+
+        return stackableCardElem;
+      };
+
+      const clearSelections = () => {
+        $("#selections").hide();
+        $("#selections").empty();
+        $("#selections").removeClass('doubleMode');
+
+        state.selections.cards = [];
+
+        $('#self .card').removeClass('focused');
+        $('#controls .card').removeClass('focused');
+      };
+
+      const selectOneCard = (card, source, index, options = {}) => {
+        const { view = true } = options;
+        const { enums: { Sources, CardInfos, CardTitles } } = state;
+
+        state.selections.cards.push({ source, index });
+
+        $(`#cards .card-${index}`).toggleClass('focused', source === Sources.hand);
+        $(`#self .equipment .card-${index}`).toggleClass('focused', source === Sources.equipment);
+        $(`.pickCards .card-${index}`).toggleClass('focused', source === Sources.temp);
+        $('#selections').toggleClass(view);
+
+        if (!view) return;
+
+        const cardHolderElem = $('<div class="cardHolder"></div>');
+        const cardElem = createCardElem(card, {}, { stackable: false, hoverView: false });
+        const infoElem = $(`<div class="cardInfo"><div class="cardTitle">${CardTitles[card.name] || 'Unknown Card'}</div><div>${CardInfos[card.name] || ''}</div></div`);
+        cardHolderElem.append(cardElem);
+        cardHolderElem.append(infoElem);
+        $('#selections').append(cardHolderElem);
+
+        $("#selections").toggleClass('doubleMode', state.selections.cards.length >= 2);
+
+        $("#selections").show();
+      };
+
+      const playCard = (card, source, index) => {
+        const isPlaying = state.gameState.turn.player === state.self.name;
+        const isPlayingOutOfTurn = (getReactingName() === state.self.name) || (state.gameState.turn.generalStore.currentPicker === state.self.name);
+
+        if (!isPlaying && !isPlayingOutOfTurn) return;
+
+        state.selections.cards.unshift({ source, index });
+
+        play();
+      };
+
+      const addCard = (card, source, index, options = {}) => {
+        const { view = true, max = 2 } = options;
+
+        if (state.selections.cards.some(c => (c.index === index) && (c.source === source))) return;
+
+        if (state.selections.cards.length >= max) clearSelections();
+
+        selectOneCard(card, source, index, { view });
+      };
+
+      const discardCard = (card, source, index) => {
+        const isPlaying = state.gameState.turn.player === state.self.name;
+
+        if (!isPlaying) return;
+
+        state.selections.cards.unshift({ source, index });
+
+        discard();
+      };
+
+      const viewCard = card => {
+        if (!state.options.hoverViewer) return;
+
+        const { enums: { CardInfos, CardTitles } } = state;
+
+        const cardHolderElem = $('<div class="cardHolder"></div>');
+        const cardElem = createCardElem(card, {}, { stackable: false, hoverView: false });
+        const infoElem = $(`<div class="cardInfo"><div class="cardTitle">${CardTitles[card.name] || 'Unknown Card'}</div><div>${CardInfos[card.name] || ''}</div></div`);
+        cardHolderElem.append(cardElem);
+        cardHolderElem.append(infoElem);
+        $('#viewer').append(cardHolderElem);
+        $('#viewer').show();
+      };
+
+      const unviewCard = () => {
+        $('#viewer').empty();
+        $('#viewer').hide();
+      };
+
+      const clearTargets = () => {
+        state.selections.equipping = false;
+        state.selections.targets = [];
+
+        // TODO: $(".player, .player *").removeClass('selected');
+        $(".player").removeClass('selected');
+        $(".player .hand .card").removeClass('selected');
+        $(".player .skills .card").removeClass('selected');
+        $(".player .role.card").removeClass('selected');
+        $(".player .equipment").removeClass('selected');
+        $(".player .equipment .card").removeClass('selected');
+        $('#hand #cards').removeClass('selected');
+      };
+
+      const selectPlayer = name => {
+        clearTargets();
+
+        if (state.gameState.turn.drawsRemaining > 0) return;
+
+        state.selections.targets = [{ name }];
+        $(`#player-${name}`).addClass('selected');
+      };
+
+      const targetHand = (playerName, index, add = false) => {
+        if (!add) clearTargets();
+
+        if (state.gameState.turn.drawsRemaining > 0) return;
+
+        if (state.gameState.turn.player !== state.self.name) return;
+
+        state.selections.targets.push({ name: playerName, hand: true });
+        $(`#player-${playerName}`).addClass('selected');
+
+        if (playerName === state.self.name) return $('#hand #cards').addClass('selected');
+
+        if (index == null) return;
+
+        $(`#player-${playerName} .hand .card-${index}`).addClass('selected');
+      };
+
+      const targetSkill = (playerName, index, add = false) => {
+        if (!add) clearTargets();
+
+        if (state.gameState.turn.drawsRemaining > 0) return;
+
+        if (state.gameState.turn.player !== state.self.name) return;
+
+        state.selections.targets.push({ name: playerName, skill: index })
+        $(`#player-${playerName}`).addClass('selected');
+        $(`#player-${playerName} .skills .card-${index}`).addClass('selected');
+      };
+
+      const targetItem = (playerName, index, add = false) => {
+        if (!add) clearTargets();
+
+        if (state.gameState.turn.drawsRemaining > 0) return;
+
+        if (state.gameState.turn.player !== state.self.name) return;
+
+        state.selections.targets.push({ name: playerName, item: index });
+        $(`#player-${playerName}`).addClass('selected');
+        $(`#player-${playerName} .equipment .card-${index}`).addClass('selected');
+      };
+
+      const targetRole = (playerName, add = false) => {
+        if (!add) clearTargets();
+
+        if (state.gameState.turn.drawsRemaining > 0) return;
+
+        if (state.gameState.turn.player !== state.self.name) return;
+
+        state.selections.targets.push({ name: playerName, role: true });
+        $(`#player-${playerName}`).addClass('selected');
+        $(`#player-${playerName} .skills .card-0`).addClass('selected');
+      };
+
+      const selectEquipment = () => {
+        clearTargets();
+
+        if (state.gameState.turn.drawsRemaining > 0) return;
+
+        if (state.gameState.turn.player !== state.self.name) return;
+
+        state.selections.equipping = true;
+
+        $(`#player-${state.self.name}`).addClass('selected');
+        $(`#player-${state.self.name} .equipment`).first().addClass('selected');
+      };
+
+      const updateAvatars = () => {
+        $("#avatars").empty();
+        $("#avatars").append(state.gameState.players.map(({ name }) => {
+          return $(`<div class="avatar"><img class="avatarImage" src="assets/images/avatar2.png"><div class="avatarName">${name.toLowerCase()}</div></div>`);
+        }));
+      };
+
+      const updateRecentEvents = () => {
+        const { gameState, options, self } = state;
+        const { players, recentEvents, started, turn } = gameState;
+
+        const eventsContainerElem = $('#eventsContainer');
+        eventsContainerElem.empty();
+
+        recentEvents.forEach(({ id, type, text }) => {
+          if (options.soundFx && state.previousEvents.length && !state.previousEvents.includes(id) && sounds[type]) {
+            sounds[type].volume = options.soundFx;
+            sounds[type].play();
+          };
+
+          eventsContainerElem.prepend(`<div class="gameEvent">${text}</div>`);
+        });
+
+        state.previousEvents = recentEvents.map(({ id }) => id);
+
+        const player = players.find(({ name }) => name === self.name);
+
+        if (!started) {
+          return;
+        }
+
+        const isPlaying = turn.player === self.name;
+
+        if (isPlaying && turn.mustMimic) {
+          sounds.yourMimic.volume = options.soundFx;
+          sounds.yourMimic.play();
+          return;
+        }
+
+        if (isPlaying && (turn.drawsRemaining > 0) && !player.tempHand.length) {
+          sounds.yourDraw.volume = options.soundFx;
+          sounds.yourDraw.play();
+          return;
+        }
+
+        if (getReactingName() === self.name) {
+          sounds.yourMove.volume = options.soundFx;
+          sounds.yourMove.play();
+          return;
+        }
+      };
+
+      const updateOpponents = () => {
+        const othersElem = $("#others");
+        othersElem.empty();
+
+        const { gameState, rules = {} } = state;
+        const { players, turn } = gameState;
+        const { currentPicker } = turn.generalStore;
+
+        const selfIndex = players.findIndex(({ name }) => name === state.self.name);
+        const self = players[selfIndex];
+        const playersAfter = players.slice(selfIndex + 1, players.length);
+        const playersBefore = players.slice(0, selfIndex);
+
+        const selfTurn = turn.player === state.self.name;
+        const selfReacting = getReactingName() === state.self.name;
+        const selfMustMimic = selfTurn && turn.mustMimic;
+        const selfPending = selfTurn && !!self.tempHand.length;
+        const selfDrawing = selfTurn && (turn.drawsRemaining > 0) && !selfMustMimic && !selfPending;
+        const selfPlaying = selfTurn && !turn.discarding && !selfMustMimic && !selfDrawing && !selfPending && !currentPicker;
+
+        const rolesEnabled = rules.roles;
+        const skillsEnabled = rules.skillsInDeck;
+        const reactorName = getReactingName();
+
+        othersElem.append(playersAfter.concat(playersBefore).map(player => {
+          const playerElem = $(`<div id="player-${player.name}" class="player section"></div>`);
+
+          if (selfPlaying || selfReacting) {
+            playerElem.click(event => {
+              event.stopPropagation();
+              selectPlayer(player.name);
+            });
+          }
+
+          playerElem.toggleClass('isPlaying', turn.player === player.name);
+          playerElem.toggleClass('isReacting', reactorName === player.name);
+          playerElem.toggleClass('isDead', player.health <= 0);
+          playerElem.toggleClass('isShopping', currentPicker === player.name);
+
+          const namePlateElem = $(`<div class="namePlate"><div class="name">${player.name.toLowerCase()}</div></div>`);
+          const bulletsElem = $('<div class="bullets"></div>');
+
+          bulletsElem.append([...Array(Math.max(player.health, 0)).keys()].map(() => $(`<img class="bullet" src="assets/images/bullet.png">`)));
+
+          namePlateElem.append(bulletsElem);
+
+          playerElem.append(namePlateElem);
+
+          const handElem = $('<div class="hand"></div>');
+
+          handElem.append([...Array(player.handSize).keys()].map(index => {
+            const margin = -40 - 20*Math.abs((player.handSize - 1)/2 - index)*(index !== player.handSize - 1)/(player.handSize/2);
+            const angle = 10*((player.handSize - 1)/2 - index);
+
+            const targetCallback = selfPlaying ? () => targetHand(player.name, index) : null;
+            const addTargetCallback = selfPlaying ? () => targetHand(player.name, index, true) : null;
+            const drawCallback = selfDrawing ? () => drawFromPlayer(player.name, { hand: true }) : null;
+
+            return createCardElem({ name: 'back', index }, { targetCallback, addTargetCallback, drawCallback }, { margin, angle });
+          }));
+
+          playerElem.append(handElem);
+
+          const tableElem = $('<div class="table"></div>');
+
+          const skillsElem = $('<div class="skills"></div>');
+
+          if (player.role) {
+            const targetCallback = (!rolesEnabled && selfPlaying) ? () => targetRole(player.name) : null;
+            const addTargetCallback = (!rolesEnabled && selfPlaying) ? () => targetRole(player.name, true) : null;
+            const drawCallback = (!rolesEnabled && selfDrawing) ? () => drawFromPlayer(player.name, { role: true }) : null;
+            skillsElem.append(createCardElem(player.role, { targetCallback, addTargetCallback, drawCallback }, { stackable: false }));
+          }
+
+          const skills = player.skills.map((card, index) => Object.assign({ index }, card));
+          skillsElem.append(skills.sort(sortByTypeThenName).map(card => {
+            const targetCallback = (skillsEnabled && selfPlaying) ? () => targetSkill(player.name, card.index) : null;
+            const addTargetCallback = (skillsEnabled && selfPlaying) ? () => targetSkill(player.name, card.index, true) : null;
+            const drawCallback = (skillsEnabled && selfDrawing) ? () => drawFromPlayer(player.name, { skillIndex: card.index }) : null;
+            const mimicCallback = selfMustMimic ? () => mimicSkill(card.name) : null;
+            return createCardElem(card, { targetCallback, addTargetCallback, drawCallback, mimicCallback });
+          }));
+
+          if (player.mimickedSkill) skillsElem.append(createCardElem({ name: player.mimickedSkill }, {}, { grayscale: true }));
+
+          tableElem.append(skillsElem);
+
+          const equipmentElem = $('<div class="equipment"></div>');
+
+          const equipment = player.equipment.map((card, index) => Object.assign({ index }, card));
+          equipmentElem.append(equipment.sort(sortByTypeThenName).map(card => {
+            const targetCallback = selfPlaying ? () => targetItem(player.name, card.index) : null;
+            const addTargetCallback = selfPlaying ? () => targetItem(player.name, card.index, true) : null;
+            const drawCallback = selfDrawing ? () => drawFromPlayer(player.name, { itemIndex: card.index }) : null;
+            return createCardElem(card, { targetCallback, addTargetCallback, drawCallback });
+          }));
+
+          tableElem.append(equipmentElem);
+
+          playerElem.append(tableElem);
+
+          return playerElem;
+        }));
+      };
+
+      const updateDeck = () => {
+        const { deck, discarded, players, turn } = state.gameState;
+        const { currentPicker } = turn.generalStore;
+        const self = players.find(({ name }) => name === state.self.name);
+
+        const selfTurn = turn.player === state.self.name;
+        const selfReacting = getReactingName() === state.self.name;
+        const selfMustMimic = selfTurn && turn.mustMimic;
+        const selfPending = selfTurn && !!self.tempHand.length;
+        const selfDrawing = selfTurn && (turn.drawsRemaining > 0) && !selfMustMimic && !selfPending;
+        const selfDiscarding = selfTurn && turn.discarding;
+        const haveBarrels = selfReacting && (turn.reacting[0].barrels > 0);
+
+        const deckElem = $("#deck");
+        deckElem.empty();
+
+        const drawPileElem = $('<div id="drawPile"></div>');
+        drawPileElem.append(`<div id="drawInfo" class="instructions">${deck.size} in deck</div>`);
+
+        const drawCallback = (selfDrawing || haveBarrels) ? () => draw() : null;
+        const drawCardElem = createCardElem({ name: 'back' }, { drawCallback }, { stackable: false, hoverView: false });
+
+        drawPileElem.append(drawCardElem);
+        deckElem.append(drawPileElem);
+
+        const discardPileElem = $('<div id="discardPile"></div>');
+        discardPileElem.append(`<div id="discardInfo" class="instructions">${discarded.size} discarded</div>`);
+
+        if (discarded.size > 0) {
+          const discardDrawCallback = selfDrawing ? () => drawFromDiscard() : null;
+          const discardCardElem = createCardElem(discarded.last, { drawCallback: discardDrawCallback }, { stackable: false });
+
+          discardPileElem.append(discardCardElem);
+        }
+
+        deckElem.append(discardPileElem);
+      };
+
+      const updateControls = () => {
+        $('#selections, #generalStore, #pickFromDraw').hide();
+        $("#pickFromDraw .pickCards").empty();
+        $("#generalStore .pickCards").empty();
+
+        const { players, turn } = state.gameState;
+        const { currentPicker } = turn.generalStore;
+        const self = players.find(({ name }) => name === state.self.name);
+
+        const selfTurn = turn.player === state.self.name;
+        const selfReacting = getReactingName() === state.self.name;
+        const selfShopping = currentPicker === state.self.name;
+        const selfMustMimic = selfTurn && turn.mustMimic;
+        const selfPending = selfTurn && !!self.tempHand.length;
+        const selfDrawing = selfTurn && (turn.drawsRemaining > 0) && !selfMustMimic && !selfPending;
+        const selfPendingDiscard = selfTurn && turn.pendingDiscard;
+        const selfDiscarding = selfTurn && turn.discarding;
+        const selfPlaying = selfTurn && !selfDiscarding && !selfMustMimic && !selfDrawing && !selfPending && !currentPicker;
+        const haveBarrels = selfReacting && (turn.reacting[0].barrels > 0);
+        const playersAlive = players.filter(p => p.health > 0).length;
+
+        if (selfPending) {
+          const { enums: { Sources } } = state;
+          const tempCards = self.tempHand.map((card, index) => Object.assign({ index }, card));
+          $("#pickFromDraw .pickCards").append(tempCards.sort(sortByTypeThenName).map(card => {
+            const selectCallback = !selfPendingDiscard ? () => addCard(card, Sources.temp, card.index, { max: playersAlive - 1, view: false }) : null;
+            const discardCallback = selfPendingDiscard ? () => finishTempDraw(card.index) : null;
+            return createCardElem(card, { selectCallback, discardCallback });
+          }));
+
+          $("#pickFromDraw .instructions").text(selfPendingDiscard ? 'Discard a Card' : 'Select Gifts')
+          $("#pickFromDraw").show();
+        }
+
+        if (currentPicker) {
+          const storeCards = turn.generalStore.cards.map((card, index) => Object.assign({ index }, card));
+          $("#generalStore .pickCards").append(storeCards.sort(sortByTypeThenName).map(card => {
+            const selectCallback = selfShopping ? () => pickFromStore(card.index) : null;
+            return createCardElem(card, { selectCallback });
+          }));
+
+          $("#generalStore").show();
+        }
+
+        $('#selections').toggle(state.selections.cards.length > 0);
+        $("#deck, #controls, #hand").removeClass('focused');
+        $("#controls").toggleClass('focused', selfPending || selfShopping || selfPlaying || selfReacting);
+        $("#deck").toggleClass('focused', selfDrawing || haveBarrels);
+        $("#hand").toggleClass('focused', selfPlaying || selfReacting);
+      };
+
+      const updateSelf = () => {
+        const selfElem = $("#self");
+        selfElem.empty();
+
+        const { enums: { CardTypes, Sources }, gameState, rules = {} } = state;
+        const { players, turn } = gameState;
+        const { currentPicker } = turn.generalStore;
+
+        const player = players.find(({ name }) => name === state.self.name);
+
+        const selfTurn = turn.player === state.self.name;
+        const selfReacting = getReactingName() === state.self.name;
+        const selfShopping = currentPicker === state.self.name;
+        const selfMustMimic = selfTurn && turn.mustMimic;
+        const selfPending = selfTurn && !!player.tempHand.length;
+        const selfDrawing = selfTurn && (turn.drawsRemaining > 0) && !selfMustMimic && !selfPending;
+        const selfDiscarding = selfTurn && turn.discarding;
+        const selfPlaying = selfTurn && !selfDiscarding && !selfMustMimic && !selfDrawing && !selfPending && !currentPicker;
+
+        const rolesEnabled = rules.roles;
+        const skillsEnabled = rules.skillsInDeck;
+
+        const handElem = $(`<div id="hand" class="section"><div class="instructions">Your Hand</div></div>`);
+
+        if (selfPlaying || selfReacting) {
+          handElem.click(event => {
+            event.stopPropagation();
+            targetHand(state.self.name);
+          });
+        }
+
+        const cardsElem = $(`<div id="cards"></div>`);
+
+        const hand = player.hand.map((card, index) => Object.assign({ index }, card));
+        cardsElem.append(hand.sort(sortByTypeThenName).map(card => {
+          const playCallback = (selfPlaying || selfReacting) ? () => playCard(card, Sources.hand, card.index) : null;
+          const selectCallback = () => addCard(card, Sources.hand, card.index);
+          const discardCallback = () => discardCard(card, Sources.hand, card.index);
+          return createCardElem(card, { playCallback, selectCallback, discardCallback });
+        }));
+
+        handElem.append(cardsElem);
+
+        selfElem.append(handElem);
+
+        const playerElem = $(`<div id="player-${player.name}" class="player section"></div>`);
+
+        playerElem.toggleClass('isPlaying', selfTurn);
+        playerElem.toggleClass('isReacting', selfReacting);
+        playerElem.toggleClass('isDead', player.health <= 0);
+        playerElem.toggleClass('isShopping', selfShopping);
+
+        if (selfPlaying || selfReacting) {
+          playerElem.click(event => {
+            event.stopPropagation();
+            selectPlayer(player.name);
+          });
+        }
+
+        const tableElem = $('<div class="table"></div>');
+
+        const equipmentElem = $('<div class="equipment"></div>');
+
+        const equipment = player.equipment.map((card, index) => Object.assign({ index }, card));
+        equipmentElem.append(equipment.sort(sortByTypeThenName).map(card => {
+          const playCallback = ([CardTypes.action, CardTypes.queueableAction].includes(card.type) && (selfReacting || selfPlaying)) ? () => playCard(card, Sources.equipment, card.index) : null;
+          const selectCallback = ([CardTypes.action, CardTypes.queueableAction].includes(card.type) && selfReacting) ? () => addCard(card, Sources.equipment, card.index) : null;
+          const targetCallback = selfPlaying ? () => targetItem(player.name, card.index) : null;
+          const drawCallback = selfDrawing ? () => drawFromPlayer(player.name, { itemIndex: card.index }) : null;
+          return createCardElem(card, { playCallback, selectCallback, targetCallback, drawCallback });
+        }));
+
+        if (selfPlaying) {
+          equipmentElem.click(event => {
+            event.stopPropagation();
+            selectEquipment();
+          });
+        }
+
+        tableElem.append(equipmentElem);
+
+        const skillsElem = $('<div class="skills"></div>');
+
+        if (player.role) {
+          const targetCallback = (!rolesEnabled && selfPlaying) ? () => targetRole(player.name) : null;
+          const drawCallback = (!rolesEnabled && selfDrawing) ? () => drawFromPlayer(player.name, { role: true }) : null;
+          skillsElem.append(createCardElem(player.role, { targetCallback, drawCallback }, { stackable: false }));
+        }
+
+        const skills = player.skills.map((card, index) => Object.assign({ index }, card));
+        skillsElem.append(skills.sort(sortByTypeThenName).map(card => {
+          const targetCallback = selfPlaying ? () => targetSkill(player.name, card.index) : null;
+          const drawCallback = (skillsEnabled && selfDrawing) ? () => drawFromPlayer(player.name, { skillIndex: card.index }) : null;
+          return createCardElem(card, { targetCallback });
+        }));
+
+        if (player.mimickedSkill) skillsElem.append(createCardElem({ name: player.mimickedSkill }, {}, { grayscale: true }));
+
+        tableElem.append(skillsElem);
+
+        playerElem.append(tableElem);
+
+        const namePlateElem = $(`<div class="namePlate"><div class="name">You (${player.name.toLowerCase()})</div></div>`);
+
+        const bulletsElem = $('<div class="bullets"></div>');
+
+        bulletsElem.append([...Array(Math.max(player.health, 0)).keys()].map(() => $(`<img class="bullet" src="assets/images/bullet.png">`)));
+
+        if (selfPlaying) {
+          bulletsElem.click(event => {
+            event.stopPropagation();
+            loseLifeForDraw();
+          });
+        }
+
+        namePlateElem.append(bulletsElem);
+
+        playerElem.append(namePlateElem);
+
+        selfElem.append(playerElem);
+
+        selfElem.append($(`<div id="controlsPlaceholder"></div>`));
+      };
+
+      const updatePlayArea = () => {
+        unviewCard();
+        clearSelections();
+        clearTargets();
+
+        $('#joinForm').hide();
+
+        updateRecentEvents();
+
+        if (!state.gameState.started) {
+          $('#startForm').show();
+          updateAvatars();
+          return;
+        }
+
+        $('#landing, #title, #avatars').hide();
+        $("#avatars").empty();
+        $('#playArea').show();
+
+        updateOpponents();
+
+        updateDeck();
+
+        updateSelf();
+
+        updateControls();
+      };
+
+      const updateButton = (buttonElem, isOn, onText, offText) => {
+        buttonElem.text(isOn ? onText : offText).toggleClass('isOn', isOn).toggleClass('isOff', !isOn);
+      };
+
+      const updateSlider = (sliderElem, value, labelElem, label) => {
+        const minValue = sliderElem.prop('min');
+        sliderElem.val(value).toggleClass('isOn', value != minValue).toggleClass('isOff', value == minValue);
+
+        if (labelElem) labelElem.text(label);
+      };
+
+      const updateRuleSlider = (ruleName, value) => {
+        const { enums: { Rules } } = state;
+        const sliderElem = $(`#rule_${ruleName}`);
+        const labelElem = $(`#label_${ruleName}`);
+        const updateWithText = text => updateSlider(sliderElem, value, labelElem, text);
+
+        switch (ruleName) {
+          case Rules.beerDiscardFrequency:
+            return updateWithText(value === 0 ? 'Never Remove Beers:' : value > 0 ? `Remove a Beer Every ${value !== 1 ? `${value} Reshuffles` : 'Reshuffle'}:` : `Remove ${value === -1 ? 'a Beer' : `${-1*value} Beers`} Every Reshuffle:`);
+          case Rules.maxQueuedPerTurn:
+            return updateWithText(value === 0 ? 'Cannot Queue Bangs During Turn:' : `Can Queue ${value === 1 ? '1 Bang' : `${value} Bangs`} Per Turn:`);
+          case Rules.maxQueued:
+            return updateWithText(value === 0 ? 'Cannot Queue Bangs:' : `Up to ${value === 1 ? '1 Queued Bang' : `${value} Queued Bangs`}:`);
+          case Rules.startingSkills:
+            return updateWithText(value === 0 ? 'Start With No Skills:' : `Start With ${value === 1 ? '1 Skill' : `${value} Skills`}:`);
+          case Rules.minSkills:
+            return updateWithText(value === 0 ? 'Minimum Of No Skills:' : `Minimum Of ${value === 1 ? '1 Skill' : `${value} Skills`}:`);
+          case Rules.maxSkills:
+            return updateWithText(value === 0 ? 'Maximum Of No Skills:' : `Maximum Of ${value === 1 ? '1 Skill' : `${value} Skills`}:`);
+          case Rules.maxSkillsPerTurn:
+            return updateWithText(value === 0 ? 'Cannot Apply Skills During Turn:' : `Can Apply ${value === 1 ? '1 Skill' : `${value} Skills`} Per Turn:`);
+          case Rules.startingHandSize:
+            return updateWithText(value === -1 ? 'Auto Starting Hand Size:' : `Start With ${value === 1 ? '1 Card' : `${value} Cards`}:`);
+          case Rules.dynamiteDamage:
+            return updateWithText(`Dynamite Does ${value} Damage:`);
+          case Rules.rewardSize:
+            return updateWithText(`${value === 0 ? 'No Cards' : value === 1 ? '1 Card' : `${value} Cards`} for Killing Someone:`);
+          case Rules.canJailSheriff:
+            return updateWithText(value === 0 ? 'Cannot Jail Sheriff' : value === 1 ? 'Can Jail Sheriff During 1v1' : 'Can Jail Sheriff');
+        }
+      };
+
+      const updateRules = () => {
+        Object.keys(state.rules).forEach(ruleName => {
+          const ruleValueElem = $(`#rule_${ruleName}`);
+          const isButton = ruleValueElem.hasClass('button');
+          const isSlider = ruleValueElem.hasClass('slider');
+          const ruleValue = state.rules[ruleName];
+
+          if (isButton) return updateButton(ruleValueElem, ruleValue, 'Yes', 'No');
+
+          if (isSlider) return updateRuleSlider(ruleName, parseInt(ruleValue));
+        });
+      };
+
+      const getEnums = () => {
+        const success = data => {
+          cleanLog('Got Enums', data);
+          state.enums = data;
+          loadSounds();
+        };
+
+        const error = ({ responseText }) => cleanLog('Failed Getting Enums', responseText);
+
+        $.ajax({ url: `/enums`, method: "GET", success, error });
+      };
+
+      const getGameState = () => {
+        const success = data => {
+          cleanLog('Got Game State', data);
+
+          if (data.version !== state.gameState.version) {
+            state.gameState = data;
+            $('#startForm').toggle(!state.gameState.started);
+            updatePlayArea();
+          }
+        };
+
+        const error = ({ responseText }) => cleanLog('Failed Getting Game State', error);
+
+        $.ajax({ url: `/privateState/${state.gameId}/${state.self.name}`, method: "GET", success, error });
+      };
+
+      const getVersion = () => {
+        const success = data => {
+          setTimeout(getVersion, 300);
+
+          if (data !== state.gameState.version) {
+            cleanLog('Got New Version', data);
+
+            if (!state.gameState.started || !state.rules) getRules();
+            
+            getGameState();
+          };
+        };
+
+        const error = ({ responseText }) => cleanLog('Failed Getting Version', responseText);
+
+        $.ajax({ url: `/stateVersion/${state.gameId}`, method: "GET", success, error });
+      };
+
+      const getRules = () => {
+        const success = data => {
+          cleanLog('Got Rules', data);
+          state.rules = data;
+          updateRules();
+        };
+
+        const error = ({ responseText }) => cleanLog('Failed Getting Rules', responseText);
+
+        $.ajax({ url: `/rules/${state.gameId}`, method: "GET", success, error });
+      };
+
+      const setRule = (ruleName, value) => {
+        const success = data => cleanLog('Set Rule', data);
+        const error = ({ responseText }) => warn(responseText);
+
+        $.ajax({ url: `/rules/${state.gameId}/${state.self.name}`,
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ [ruleName]: value }),
+          success,
+          error
+        });
+      };
+
+      const draw = debounce(() => {
+        const success = data => cleanLog('Drew', data);
+        const error = ({ responseText }) => warn(responseText);
+
+        $.ajax({ url: `/draw/${state.gameId}/${state.self.name}`, method: "POST", success, error });
+      });
+
+      const drawFromDiscard = () => {
+        const success = data => cleanLog('Drew From Discard', data);
+        const error = ({ responseText }) => warn(responseText);
+
+        $.ajax({
+          url: `/draw/${state.gameId}/${state.self.name}`,
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ target: { discard: true } }),
+          success,
+          error
+        });
+      };
+
+      const drawFromPlayer = (targetName, { hand = false, itemIndex = -1, role = false, skillIndex = -1 }) => {
+        if (!hand && (itemIndex === -1) && !role && (skillIndex === -1)) return;
+
+        const success = data => cleanLog('Drew From Player', data);
+
+        const error = ({ responseText }) => warn(responseText);
+
+        const target = { name: targetName };
+
+        if (hand) target.hand = true;
+
+        if (itemIndex !== -1) target.item = itemIndex;
+
+        if (role) target.role = true;
+
+        if (skillIndex !== -1) target.skill = skillIndex;
+
+        $.ajax({
+          url: `/draw/${state.gameId}/${state.self.name}`,
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ target }),
+          success,
+          error
+        });
+      };
+
+      const finishTempDraw = cardIndex => {
+        const success = data => cleanLog('Discarded From Temp', data);
+        const error = ({ responseText }) => warn(responseText);
+
+        $.ajax({
+          url: `/finishTempDraw/${state.gameId}/${state.self.name}`,
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ cards: [cardIndex] }),
+          success,
+          error
+        });
+      };
+
+      const pickFromStore = cardIndex => {
+        const success = data => cleanLog('Picked From Store', data);
+        const error = ({ responseText }) => warn(responseText);
+
+        $.ajax({
+          url: `/pickFromStore/${state.gameId}/${state.self.name}`,
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ cards: [cardIndex] }),
+          success,
+          error
+        });
+      };
+
+      const loseLifeForDraw = () => {
+        if (state.selections.targets.length !== 1) return;
+
+        if (state.selections.targets[0].name !== state.self.name) return;
+
+        const player = state.gameState.players.find(({ name }) => name === state.self.name);
+
+        const success = data => cleanLog('Lost Life For Draw', data);
+
+        const error = ({ responseText }) => warn(responseText);
+
+        $.ajax({ url: `/loseLife/${state.gameId}/${state.self.name}`, method: "POST", success, error });
+      };
+
+      const mimicSkill = skillName => {
+        const success = data => cleanLog('Mimicked Skill', data);
+        const error = ({ responseText }) => warn(responseText);
+
+        $.ajax({
+          url: `/mimicSkill/${state.gameId}/${state.self.name}`,
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ skill: skillName }),
+          success,
+          error
+        });
+      };
+
+      const play = () => {
+        const { cards, equipping, targets } = state.selections;
+
+        if (!cards.length) return;
+
+        const targetName = targets.length ? targets[0].name : null;
+        const player = state.gameState.players.find(({ name }) => name === state.self.name);
+        const willHarmSelf = (targetName === state.self.name) && !equipping;
+
+        if (!state.options.harmSelf && willHarmSelf) return warn('You have not enabled the option to harm yourself. If you are trying to queue up, ensure your equipment area is selected.');
+
+        const success = data => cleanLog('Played', data);
+
+        const error = ({ responseText }) => warn(responseText);
+
+        const data = {
+          cards,
+          equipping,
+          targets: state.selections.targets,
+        };
+
+        $.ajax({
+          url: `/play/${state.gameId}/${state.self.name}`,
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify(data),
+          success,
+          error
+        });
+      };
+
+      const discard = () => {
+        const { cards, targets } = state.selections;
+
+        if (!cards.length) return;
+
+        const success = data => cleanLog('Discarded', data);
+        const error = ({ responseText }) => warn(responseText);
+
+        $.ajax({
+          url: `/discard/${state.gameId}/${state.self.name}`,
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ cards, targets }),
+          success,
+          error
+        });
+      };
+
+      $('#playArea').click(() => {
+        unviewCard();
+        clearTargets();
+        clearSelections();
+      });
+
+      $('#createGame').click(() => {
+        const playerName = $('#playerName').val();
+
+        const success = data => {
+          themeSong.play();
+          cleanLog('Created Game', data);
+          state.gameId = data.gameId;
+          state.self.name = data.playerName;
+          $('.gameCode').text(data.gameId);
+          getVersion();
+        };
+
+        const error = ({ responseText }) => warn(responseText);
+        $.ajax({ url: `/create/${playerName}`, method: "POST", success, error });
+      });
+
+      $('#joinGame').click(() => {
+        const gameId = $('#gameId').val();
+        const playerName = $('#playerName').val();
+
+        const success = data => {
+          themeSong.play();
+          cleanLog('Joined Game', data);
+          state.gameId = data.gameId;
+          state.self.name = data.playerName;
+          $('.gameCode').text(data.gameId);
+          getVersion();
+        };
+
+        const error = ({ responseText }) => warn(responseText);
+        $.ajax({ url: `/join/${gameId}/${playerName}`, method: "POST", success, error });
+      });
+
+      $('#startGame').click(() => {
+        const success = data => {
+          cleanLog('Started Game', data);
+          state.gameState.started = true;
+        };
+
+        const error = ({ responseText }) => warn(responseText);
+        $.ajax({ url: `/start/${state.gameId}/${state.self.name}`, method: "POST", success, error });
+      });
+
+      $('#customRules').click(() => {
+        $('#rulesForm').toggle();
+      });
+
+      $('#playButton').click(event => {
+        event.stopPropagation();
+        play();
+      });
+
+      $('#discardButton').click(event => {
+        event.stopPropagation();
+        discard();
+      });
+
+      $('#passButton').click(event => {
+        event.stopPropagation();
+        const success = data => cleanLog('Passed', data);
+        const error = ({ responseText }) => warn(responseText);
+        $.ajax({ url: `/endTurn/${state.gameId}/${state.self.name}`, method: "POST", success, error });
+      });
+
+      $('#optionsButton').click(event => {
+        event.stopPropagation();
+        $("#warning").hide();
+        $("#overlay, #options").show();
+      });
+
+      $('#optionsBack').click(event => {
+        $("#overlay, #options").hide();
+      });
+
+      $('#optionsQuit').click(event => {
+        location.reload();
+      });
+
+      updateSlider($('#musicVolume'), state.options.music*100);
+      $('#musicVolume').on('input', event => {
+        state.options.music = parseInt(event.target.value)/100;
+        $(event.target).toggleClass('isOn', state.options.music > 0).toggleClass('isOff', state.options.music === 0);
+        themeSong.volume = state.options.music;
+        state.options.music ? themeSong.play() : themeSong.pause();
+        cookies.setItem('music', state.options.music);
+      });
+
+      updateSlider($('#soundEffectsVolume'), state.options.soundFx*100);
+      $('#soundEffectsVolume').on('input', event => {
+        state.options.soundFx = parseInt(event.target.value)/100;
+        $(event.target).toggleClass('isOn', state.options.soundFx > 0).toggleClass('isOff', state.options.soundFx === 0);
+        cookies.setItem('soundFx', state.options.soundFx);
+      });
+
+      updateButton($('#hoverViewerToggle'), state.options.hoverViewer, 'On', 'Off');
+      $('#hoverViewerToggle').click(event => {
+        state.options.hoverViewer = !state.options.hoverViewer;
+        $(event.target).text(state.options.hoverViewer ? 'On' : 'Off').toggleClass('isOn', state.options.hoverViewer).toggleClass('isOff', !state.options.hoverViewer);
+        cookies.setItem('hoverViewer', state.options.hoverViewer);
+      });
+
+      updateButton($('#harmSelfToggle'), state.options.harmSelf, 'On', 'Off');
+      $('#harmSelfToggle').click(event => {
+        state.options.harmSelf = !state.options.harmSelf;
+        $(event.target).text(state.options.harmSelf ? 'On' : 'Off').toggleClass('isOn', state.options.harmSelf).toggleClass('isOff', !state.options.harmSelf);
+        cookies.setItem('harmSelf', state.options.harmSelf);
+      });
+
+      $('#controls').click(event => {
+        event.stopPropagation();
+      });
+
+      $('#rulesForm .button').click(event => {
+        event.stopPropagation();
+        const ruleName = event.target.id.split('_')[1];
+        updateButton($(event.target), !state.rules[ruleName], 'Yes', 'No');
+        setRule(ruleName, !state.rules[ruleName]);
+      });
+
+      $('#rulesForm .slider').on('input', event => {
+        event.stopPropagation();
+        const ruleName = event.target.id.split('_')[1];
+        updateRuleSlider(ruleName, parseInt(event.target.value));
+      });
+
+      $('#rulesForm .slider').on('change', event => {
+        event.stopPropagation();
+        const ruleName = event.target.id.split('_')[1];
+        setRule(ruleName, parseInt(event.target.value));
+      });
+    
+      getEnums();
+    </script>
+  </body>
+</html>
