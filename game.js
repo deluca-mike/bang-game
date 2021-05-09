@@ -607,7 +607,7 @@ module.exports = class Game {
     const isSlab = playerHasSkill(player, Skills.slab);
     const targetIsSheriff = playerHasRole(target, Roles.sheriff);
     const defenseGuaranteed = this.reactionDefenseGuaranteed(target, RequiredReactions.miss, 1 + isSlab);
-    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
+    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || target.health > 1 || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
 
     const cards = getWithIndices(player.hand, cardIndices);
     const allDiamonds = cards.every(({ suit }) => suit === Suits.diamonds);
@@ -1580,7 +1580,7 @@ module.exports = class Game {
     const isSlab = playerHasSkill(player, Skills.slab);
     const targetIsSheriff = playerHasRole(target, Roles.sheriff);
     const defenseGuaranteed = this.reactionDefenseGuaranteed(target, RequiredReactions.miss, 1 + isSlab);
-    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
+    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || target.health > 1 || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
 
     const isWilly = playerHasSkill(player, Skills.willy);
     const hasVolcanic = playerHasEquipped(player, Items.volcanic);
@@ -1677,7 +1677,7 @@ module.exports = class Game {
 
     const targetIsSheriff = playerHasRole(target, Roles.sheriff);
     const defenseGuaranteed = this.reactionDefenseGuaranteed(target, RequiredReactions.miss, 1);
-    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
+    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || target.health > 1 || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
 
     const card = player.equipment[cardIndices[0]];
     const targetIsApache = playerHasSkill(target, Skills.apache);
@@ -1788,7 +1788,7 @@ module.exports = class Game {
 
     const targetIsSheriff = playerHasRole(target, Roles.sheriff);
     const defenseGuaranteed = this.reactionDefenseGuaranteed(target, RequiredReactions.miss, 1);
-    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
+    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || target.health > 1 || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
 
     const card = player.equipment[cardIndices[0]];
     const targetIsApache = playerHasSkill(target, Skills.apache);
@@ -1819,7 +1819,7 @@ module.exports = class Game {
 
     const targetIsSheriff = playerHasRole(target, Roles.sheriff);
     const defenseGuaranteed = this.reactionDefenseGuaranteed(target, RequiredReactions.bang, 1);
-    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
+    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || target.health > 1 || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
 
     const card = player.hand[cardIndices[0]];
     const targetIsApache = playerHasSkill(target, Skills.apache);
@@ -1954,7 +1954,7 @@ module.exports = class Game {
     const nextPlayers = this.getAlivePlayersAfter(player);
     const sheriff = nextPlayers.find(p => playerHasRole(p, Roles.sheriff));
     const defenseGuaranteed = sheriff && this.reactionDefenseGuaranteed(sheriff, RequiredReactions.miss, 1);
-    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !sheriff || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
+    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !sheriff || sheriff.health > 1 || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
 
     // --- STATE MODIFICATIONS BEYOND THIS POINT --- //
 
@@ -1994,7 +1994,7 @@ module.exports = class Game {
     const nextPlayers = this.getAlivePlayersAfter(player);
     const sheriff = nextPlayers.find(p => playerHasRole(p, Roles.sheriff));
     const defenseGuaranteed = sheriff && this.reactionDefenseGuaranteed(sheriff, RequiredReactions.miss, 1);
-    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !sheriff || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
+    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !sheriff || sheriff.health > 1 || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
 
     // --- STATE MODIFICATIONS BEYOND THIS POINT --- //
 
@@ -2018,7 +2018,7 @@ module.exports = class Game {
     const nextPlayers = this.getAlivePlayersAfter(player);
     const sheriff = nextPlayers.find(p => playerHasRole(p, Roles.sheriff));
     const defenseGuaranteed = sheriff && this.reactionDefenseGuaranteed(sheriff, RequiredReactions.bang, 1);
-    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !sheriff || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
+    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !sheriff || sheriff.health > 1 || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
 
     // --- STATE MODIFICATIONS BEYOND THIS POINT --- //
 
@@ -2069,7 +2069,7 @@ module.exports = class Game {
 
     const targetIsSheriff = playerHasRole(target, Roles.sheriff);
     const defenseGuaranteed = this.reactionDefenseGuaranteed(target, RequiredReactions.miss, 1);
-    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
+    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || target.health > 1 || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
 
     const card = player.equipment[cardIndices[0]];
     const targetIsApache = playerHasSkill(target, Skills.apache);
@@ -2122,7 +2122,7 @@ module.exports = class Game {
 
     const targetIsSheriff = playerHasRole(target, Roles.sheriff);
     const defenseGuaranteed = this.reactionDefenseGuaranteed(target, RequiredReactions.miss, 1);
-    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
+    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || target.health > 1 || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
 
     const card = player.equipment[cardIndices[0]];
     const targetIsApache = playerHasSkill(target, Skills.apache);
@@ -2166,7 +2166,7 @@ module.exports = class Game {
 
     const targetIsSheriff = playerHasRole(target, Roles.sheriff);
     const defenseGuaranteed = this.reactionDefenseGuaranteed(target, RequiredReactions.miss, 1);
-    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
+    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || target.health > 1 || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
 
     const card = player.hand[cardIndices[0]];
     const targetIsApache = playerHasSkill(target, Skills.apache);
@@ -2239,7 +2239,7 @@ module.exports = class Game {
 
     const targetIsSheriff = playerHasRole(target, Roles.sheriff);
     const defenseGuaranteed = this.reactionDefenseGuaranteed(target, RequiredReactions.miss, 1);
-    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
+    assert(this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || target.health > 1 || defenseGuaranteed, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one.`);
 
     const mainCard = player.hand[cardIndices[0]];
     const targetIsApache = playerHasSkill(target, Skills.apache);
@@ -2453,7 +2453,7 @@ module.exports = class Game {
     // TODO: if reactor 1 deflects to reactor 2, who is the sheriff, they may suffer 2 life loses when this logic only checks one
     const targetIsSheriff = playerHasRole(target, Roles.sheriff);
     const defenseGuaranteed = this.reactionDefenseGuaranteed(target, requiredReaction, quantity);
-    const noSheriffRisk = (!duel && !deflecting) || this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || defenseGuaranteed;
+    const noSheriffRisk = (!duel && !deflecting) || this.isOneOnOne || this.mechanics.canKillSheriff || !targetIsSheriff || target.health > 1 || defenseGuaranteed;
     assert(noSheriffRisk, `Cannot risk killing the ${CardTitles[Roles.sheriff]} until one on one. You need to Pass and take the hit.`);
 
     const [{ suit }] = cards;

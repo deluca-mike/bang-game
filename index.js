@@ -23,8 +23,6 @@ const enums = {
   Suits,
 };
 
-// TODO: game does not exist unhandled error likely throwing outside of try catch
-// TODO: auto load game if call comes in when not loaded
 // TODO: cookies in code for player
 
 const games = new Map();
@@ -51,7 +49,7 @@ const getGame = async gameId => {
 
   const snapshot = await gameSnapshots.get(gameId);
 
-  assert(snapshot, 'Game does not exist.');
+  if (!snapshot) return null;
 
   console.log(`${gameId} fetched from storage.`);
 
@@ -105,11 +103,13 @@ app.post('/join/:id/:name', async (req, res) => {
 
   if (playerName.length > 10) res.status(400).send('You name is limited to 10 characters.');
 
-  const game = await getGame(gameId);
-
-  if (game.playerExists(playerName)) return res.send({ gameId, playerName });
-
   try {
+    const game = await getGame(gameId);
+
+    if (!game) throw Error('Game does not exist.');
+
+    if (game.playerExists(playerName)) return res.send({ gameId, playerName });
+
     game.addPlayer(playerName);
     res.send({ gameId, playerName });
     await saveGame(game);
@@ -126,9 +126,12 @@ app.post('/start/:id/:name', async (req, res) => {
 
   const gameId = id.toUpperCase();
   const playerName = name.toUpperCase();
-  const game = await getGame(gameId);
 
   try {
+    const game = await getGame(gameId);
+
+    if (!game) throw Error('Game does not exist.');
+
     res.send(game.start(playerName));
     await saveGame(game);
   } catch (err) {
@@ -142,7 +145,7 @@ app.get('/stateVersion/:id', async (req, res) => {
   const gameId = id.toUpperCase();
   const game = await getGame(gameId);
 
-  res.send(game.version);
+  res.send(game?.version);
 });
 
 app.get('/publicState/:id', async (req, res) => {
@@ -150,7 +153,7 @@ app.get('/publicState/:id', async (req, res) => {
   const gameId = id.toUpperCase();
   const game = await getGame(gameId);
 
-  res.send(game.publicState);
+  res.send(game?.publicState);
 });
 
 app.get('/privateState/:id/:name', async (req, res) => {
@@ -160,9 +163,12 @@ app.get('/privateState/:id/:name', async (req, res) => {
 
   const gameId = id.toUpperCase();
   const playerName = name.toUpperCase();
-  const game = await getGame(gameId);
 
   try {
+    const game = await getGame(gameId);
+
+    if (!game) throw Error('Game does not exist.');
+
     res.send(game.getPrivateState(playerName));
   } catch (err) {
     console.log(err);
@@ -177,9 +183,12 @@ app.post('/draw/:id/:name', async (req, res) => {
 
   const gameId = id.toUpperCase();
   const playerName = name.toUpperCase();
-  const game = await getGame(gameId);
 
   try {
+    const game = await getGame(gameId);
+
+    if (!game) throw Error('Game does not exist.');
+
     res.send(game.draw(playerName, req.body));
     await saveGame(game);
   } catch (err) {
@@ -195,9 +204,12 @@ app.post('/finishTempDraw/:id/:name', async (req, res) => {
 
   const gameId = id.toUpperCase();
   const playerName = name.toUpperCase();
-  const game = await getGame(gameId);
 
   try {
+    const game = await getGame(gameId);
+
+    if (!game) throw Error('Game does not exist.');
+
     res.send(game.finishTempDraw(playerName, req.body));
     await saveGame(game);
   } catch (err) {
@@ -213,9 +225,12 @@ app.post('/pickFromStore/:id/:name', async (req, res) => {
 
   const gameId = id.toUpperCase();
   const playerName = name.toUpperCase();
-  const game = await getGame(gameId);
 
   try {
+    const game = await getGame(gameId);
+
+    if (!game) throw Error('Game does not exist.');
+
     res.send(game.pickFromStore(playerName, req.body));
     await saveGame(game);
   } catch (err) {
@@ -231,9 +246,12 @@ app.post('/discard/:id/:name', async (req, res) => {
 
   const gameId = id.toUpperCase();
   const playerName = name.toUpperCase();
-  const game = await getGame(gameId);
 
   try {
+    const game = await getGame(gameId);
+
+    if (!game) throw Error('Game does not exist.');
+
     res.send(game.discard(playerName, req.body));
     await saveGame(game);
   } catch (err) {
@@ -249,9 +267,12 @@ app.post('/play/:id/:name', async (req, res) => {
 
   const gameId = id.toUpperCase();
   const playerName = name.toUpperCase();
-  const game = await getGame(gameId);
 
   try {
+    const game = await getGame(gameId);
+
+    if (!game) throw Error('Game does not exist.');
+
     res.send(game.play(playerName, req.body));
     await saveGame(game);
   } catch (err) {
@@ -267,9 +288,12 @@ app.post('/loseLife/:id/:name', async (req, res) => {
 
   const gameId = id.toUpperCase();
   const playerName = name.toUpperCase();
-  const game = await getGame(gameId);
 
   try {
+    const game = await getGame(gameId);
+
+    if (!game) throw Error('Game does not exist.');
+
     res.send(game.loseLifeForDraw(playerName));
     await saveGame(game);
   } catch (err) {
@@ -285,9 +309,12 @@ app.post('/mimicSkill/:id/:name', async (req, res) => {
 
   const gameId = id.toUpperCase();
   const playerName = name.toUpperCase();
-  const game = await getGame(gameId);
 
   try {
+    const game = await getGame(gameId);
+
+    if (!game) throw Error('Game does not exist.');
+
     res.send(game.mimicSkill(playerName, req.body));
     await saveGame(game);
   } catch (err) {
@@ -303,9 +330,12 @@ app.post('/endTurn/:id/:name', async (req, res) => {
 
   const gameId = id.toUpperCase();
   const playerName = name.toUpperCase();
-  const game = await getGame(gameId);
 
   try {
+    const game = await getGame(gameId);
+
+    if (!game) throw Error('Game does not exist.');
+
     res.send(game.endTurn(playerName));
     await saveGame(game);
   } catch (err) {
@@ -319,7 +349,7 @@ app.get('/rules/:id', async (req, res) => {
   const gameId = id.toUpperCase();
   const game = await getGame(gameId);
 
-  res.send(game.rules);
+  res.send(game?.rules);
 });
 
 app.post('/rules/:id/:name', async (req, res) => {
@@ -329,9 +359,12 @@ app.post('/rules/:id/:name', async (req, res) => {
 
   const gameId = id.toUpperCase();
   const playerName = name.toUpperCase();
-  const game = await getGame(gameId);
 
   try {
+    const game = await getGame(gameId);
+
+    if (!game) throw Error('Game does not exist.');
+
     res.send(game.setRules(playerName, req.body));
     await saveGame(game);
   } catch (err) {

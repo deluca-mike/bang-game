@@ -250,6 +250,9 @@
         <label>Harm Yourself:</label>
         <button id="harmSelfToggle" class="button" type="button">Off</button>
 
+        <label>Mobile:</label>
+        <button id="mobileToggle" class="button" type="button">Off</button>
+
         <div class="buttons">
           <button id="optionsBack" class="button" type="button">Ok</button>
           <button id="optionsQuit" class="button" type="button">Quit</button>
@@ -370,6 +373,7 @@
           soundFx: parseFloat((cookies.getItem('soundFx') || '0.5')),
           hoverViewer: (cookies.getItem('hoverViewer') || 'true') === 'true',
           harmSelf: (cookies.getItem('harmSelf') || 'false') === 'true',
+          mobile: (cookies.getItem('mobile') || 'false') === 'true',
         },
       };
 
@@ -498,9 +502,13 @@
             callbackName === 'discardCallback' ? $(`<div class="discardOverlay">Disc</div>`) :
             $(`<div class="unknownOverlay">Ukn</div>`);
 
-          elem.on('dblclick click', event => {
+          elem.on('click dblclick', event => {
             event.stopPropagation();
             callbacks[callbackName]();
+          });
+
+          elem.on('contextmenu', event => {
+            event.stopPropagation();
           });
 
           return elem;
@@ -1476,6 +1484,13 @@
         state.options.harmSelf = !state.options.harmSelf;
         $(event.target).text(state.options.harmSelf ? 'On' : 'Off').toggleClass('isOn', state.options.harmSelf).toggleClass('isOff', !state.options.harmSelf);
         cookies.setItem('harmSelf', state.options.harmSelf);
+      });
+
+      updateButton($('#mobileToggle'), state.options.mobile, 'On', 'Off');
+      $('#mobileToggle').click(event => {
+        state.options.mobile = !state.options.mobile;
+        $(event.target).text(state.options.mobile ? 'On' : 'Off').toggleClass('isOn', state.options.mobile).toggleClass('isOff', !state.options.mobile);
+        cookies.setItem('mobile', state.options.mobile);
       });
 
       $('#controls').click(event => {
