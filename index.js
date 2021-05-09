@@ -1,5 +1,5 @@
-const assert = require('assert');
-const Keyv = require('keyv');
+const JSONdb = require('simple-json-db');
+const gameSnapshots = new JSONdb('./database.json');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
@@ -10,6 +10,7 @@ const { Events, Rules, Sources } = require('./enums');
 
 const MEMORY_TTL = 3600000; // 1 hour
 const STORAGE_TTL = 172800000;  // 48 hours
+const PURGE_INTERVAL = 1800000;  // 30 minutes
 
 const letters = /^[A-Za-z]+$/;
 
@@ -27,41 +28,61 @@ const enums = {
 
 const games = new Map();
 
-const checkGame = (gameId, lastVersion = null) => {
-  const { version } = games.get(gameId);
+const purgeGamesFromMemory = (now) => {
+  for (let gameId of games.keys()) {
+    const game = games.get(gameId);
 
-  if (version === lastVersion) {
+    if (game.lastTime + MEMORY_TTL > now) continue;
+
     games.delete(gameId);
     console.log(`${gameId} deleted from memory.`);
-    return;
   }
-
-  setTimeout(() => checkGame(gameId, version), MEMORY_TTL);
 };
 
-const gameSnapshots = new Keyv('mongodb://127.0.0.1:27017/bang');
-gameSnapshots.on('error', err => console.log('DB connection Error', err));
+const purgeGamesFromStorage = (now) => {
+  const gamesInStorage = gameSnapshots.JSON();
 
-const getGame = async gameId => {
+  Object.keys(gamesInStorage).forEach(gameId => {
+    const game = JSON.parse(gamesInStorage[gameId]);
+
+    if (game.lastTime + STORAGE_TTL > now) return;
+
+    gameSnapshots.delete(gameId);
+    console.log(`${gameId} deleted from storage.`);
+  });
+};
+
+setInterval(() => {
+  console.log(`Running game purge...`);
+
+  const now = +new Date();
+  purgeGamesFromMemory(now);
+  purgeGamesFromStorage(now);
+
+  console.log(`Finished game purge...`);
+}, PURGE_INTERVAL);
+
+const getGame = gameId => {
   const cachedGame = games.get(gameId);
 
   if (cachedGame) return cachedGame;
 
-  const snapshot = await gameSnapshots.get(gameId);
+  const snapshot = gameSnapshots.get(gameId);
 
   if (!snapshot) return null;
 
   console.log(`${gameId} fetched from storage.`);
 
-  const game = new Game({ snapshot });
+  const game = new Game({ snapshot: JSON.parse(snapshot) });
 
   games.set(game.id, game);
-  checkGame(game.id);
 
   return game;
 };
 
-const saveGame = game => gameSnapshots.set(game.id, game.snapshot, STORAGE_TTL);
+const saveGame = game => {
+  gameSnapshots.set(game.id, JSON.stringify(game.snapshot));
+}
 
 app.use(express.static('public'));
 
@@ -69,7 +90,7 @@ app.get('/enums', (req, res) => {
   res.send(enums);
 });
 
-app.post('/create/:name', async (req, res) => {
+app.post('/create/:name', (req, res) => {
   const { name } = req.params;
 
   if (!name.match(letters)) return res.status(400).send('Name can only contain letters.');
@@ -83,8 +104,7 @@ app.post('/create/:name', async (req, res) => {
     game.addPlayer(playerName);
 
     games.set(game.id, game);
-    checkGame(game.id);
-    await saveGame(game);
+    saveGame(game);
 
     res.send({ gameId: game.id, playerName });
   } catch (err) {
@@ -93,7 +113,7 @@ app.post('/create/:name', async (req, res) => {
   }
 });
 
-app.post('/join/:id/:name', async (req, res) => {
+app.post('/join/:id/:name', (req, res) => {
   const { id, name } = req.params;
 
   if (!name.match(letters)) return res.status(400).send('Name can only contain letters.');
@@ -104,22 +124,22 @@ app.post('/join/:id/:name', async (req, res) => {
   if (playerName.length > 10) res.status(400).send('You name is limited to 10 characters.');
 
   try {
-    const game = await getGame(gameId);
+    const game = getGame(gameId);
 
     if (!game) throw Error('Game does not exist.');
 
     if (game.playerExists(playerName)) return res.send({ gameId, playerName });
 
     game.addPlayer(playerName);
+    saveGame(game);
     res.send({ gameId, playerName });
-    await saveGame(game);
   } catch (err) {
     console.log(err);
     res.status(400).send(err.message);
   }
 });
 
-app.post('/start/:id/:name', async (req, res) => {
+app.post('/start/:id/:name', (req, res) => {
   const { id, name } = req.params;
 
   if (!name.match(letters)) return res.status(400).send('Name can only contain letters.');
@@ -128,35 +148,35 @@ app.post('/start/:id/:name', async (req, res) => {
   const playerName = name.toUpperCase();
 
   try {
-    const game = await getGame(gameId);
+    const game = getGame(gameId);
 
     if (!game) throw Error('Game does not exist.');
 
+    saveGame(game);
     res.send(game.start(playerName));
-    await saveGame(game);
   } catch (err) {
     console.log(err);
     res.status(400).send(err.message);
   }
 });
 
-app.get('/stateVersion/:id', async (req, res) => {
+app.get('/stateVersion/:id', (req, res) => {
   const { id } = req.params;
   const gameId = id.toUpperCase();
-  const game = await getGame(gameId);
+  const game = getGame(gameId);
 
   res.send(game?.version);
 });
 
-app.get('/publicState/:id', async (req, res) => {
+app.get('/publicState/:id', (req, res) => {
   const { id } = req.params;
   const gameId = id.toUpperCase();
-  const game = await getGame(gameId);
+  const game = getGame(gameId);
 
   res.send(game?.publicState);
 });
 
-app.get('/privateState/:id/:name', async (req, res) => {
+app.get('/privateState/:id/:name', (req, res) => {
   const { id, name } = req.params;
 
   if (!name.match(letters)) return res.status(400).send('Name can only contain letters.');
@@ -165,7 +185,7 @@ app.get('/privateState/:id/:name', async (req, res) => {
   const playerName = name.toUpperCase();
 
   try {
-    const game = await getGame(gameId);
+    const game = getGame(gameId);
 
     if (!game) throw Error('Game does not exist.');
 
@@ -176,7 +196,7 @@ app.get('/privateState/:id/:name', async (req, res) => {
   }
 });
 
-app.post('/draw/:id/:name', async (req, res) => {
+app.post('/draw/:id/:name', (req, res) => {
   const { id, name } = req.params;
 
   if (!name.match(letters)) return res.status(400).send('Name can only contain letters.');
@@ -185,19 +205,19 @@ app.post('/draw/:id/:name', async (req, res) => {
   const playerName = name.toUpperCase();
 
   try {
-    const game = await getGame(gameId);
+    const game = getGame(gameId);
 
     if (!game) throw Error('Game does not exist.');
 
     res.send(game.draw(playerName, req.body));
-    await saveGame(game);
+    saveGame(game);
   } catch (err) {
     console.log(err);
     res.status(400).send(err.message);
   }
 });
 
-app.post('/finishTempDraw/:id/:name', async (req, res) => {
+app.post('/finishTempDraw/:id/:name', (req, res) => {
   const { id, name } = req.params;
 
   if (!name.match(letters)) return res.status(400).send('Name can only contain letters.');
@@ -206,19 +226,19 @@ app.post('/finishTempDraw/:id/:name', async (req, res) => {
   const playerName = name.toUpperCase();
 
   try {
-    const game = await getGame(gameId);
+    const game = getGame(gameId);
 
     if (!game) throw Error('Game does not exist.');
 
+    saveGame(game);
     res.send(game.finishTempDraw(playerName, req.body));
-    await saveGame(game);
   } catch (err) {
     console.log(err);
     res.status(400).send(err.message);
   }
 });
 
-app.post('/pickFromStore/:id/:name', async (req, res) => {
+app.post('/pickFromStore/:id/:name', (req, res) => {
   const { id, name } = req.params;
 
   if (!name.match(letters)) return res.status(400).send('Name can only contain letters.');
@@ -227,19 +247,19 @@ app.post('/pickFromStore/:id/:name', async (req, res) => {
   const playerName = name.toUpperCase();
 
   try {
-    const game = await getGame(gameId);
+    const game = getGame(gameId);
 
     if (!game) throw Error('Game does not exist.');
 
+    saveGame(game);
     res.send(game.pickFromStore(playerName, req.body));
-    await saveGame(game);
   } catch (err) {
     console.log(err);
     res.status(400).send(err.message);
   }
 });
 
-app.post('/discard/:id/:name', async (req, res) => {
+app.post('/discard/:id/:name', (req, res) => {
   const { id, name } = req.params;
 
   if (!name.match(letters)) return res.status(400).send('Name can only contain letters.');
@@ -248,19 +268,19 @@ app.post('/discard/:id/:name', async (req, res) => {
   const playerName = name.toUpperCase();
 
   try {
-    const game = await getGame(gameId);
+    const game = getGame(gameId);
 
     if (!game) throw Error('Game does not exist.');
 
+    saveGame(game);
     res.send(game.discard(playerName, req.body));
-    await saveGame(game);
   } catch (err) {
     console.log(err);
     res.status(400).send(err.message);
   }
 });
 
-app.post('/play/:id/:name', async (req, res) => {
+app.post('/play/:id/:name', (req, res) => {
   const { id, name } = req.params;
 
   if (!name.match(letters)) return res.status(400).send('Name can only contain letters.');
@@ -269,19 +289,19 @@ app.post('/play/:id/:name', async (req, res) => {
   const playerName = name.toUpperCase();
 
   try {
-    const game = await getGame(gameId);
+    const game = getGame(gameId);
 
     if (!game) throw Error('Game does not exist.');
 
+    saveGame(game);
     res.send(game.play(playerName, req.body));
-    await saveGame(game);
   } catch (err) {
     console.log(err);
     res.status(400).send(err.message);
   }
 });
 
-app.post('/loseLife/:id/:name', async (req, res) => {
+app.post('/loseLife/:id/:name', (req, res) => {
   const { id, name } = req.params;
 
   if (!name.match(letters)) return res.status(400).send('Name can only contain letters.');
@@ -290,19 +310,19 @@ app.post('/loseLife/:id/:name', async (req, res) => {
   const playerName = name.toUpperCase();
 
   try {
-    const game = await getGame(gameId);
+    const game = getGame(gameId);
 
     if (!game) throw Error('Game does not exist.');
 
+    saveGame(game);
     res.send(game.loseLifeForDraw(playerName));
-    await saveGame(game);
   } catch (err) {
     console.log(err);
     res.status(400).send(err.message);
   }
 });
 
-app.post('/mimicSkill/:id/:name', async (req, res) => {
+app.post('/mimicSkill/:id/:name', (req, res) => {
   const { id, name } = req.params;
 
   if (!name.match(letters)) return res.status(400).send('Name can only contain letters.');
@@ -311,19 +331,19 @@ app.post('/mimicSkill/:id/:name', async (req, res) => {
   const playerName = name.toUpperCase();
 
   try {
-    const game = await getGame(gameId);
+    const game = getGame(gameId);
 
     if (!game) throw Error('Game does not exist.');
 
+    saveGame(game);
     res.send(game.mimicSkill(playerName, req.body));
-    await saveGame(game);
   } catch (err) {
     console.log(err);
     res.status(400).send(err.message);
   }
 });
 
-app.post('/endTurn/:id/:name', async (req, res) => {
+app.post('/endTurn/:id/:name', (req, res) => {
   const { id, name } = req.params;
 
   if (!name.match(letters)) return res.status(400).send('Name can only contain letters.');
@@ -332,27 +352,27 @@ app.post('/endTurn/:id/:name', async (req, res) => {
   const playerName = name.toUpperCase();
 
   try {
-    const game = await getGame(gameId);
+    const game = getGame(gameId);
 
     if (!game) throw Error('Game does not exist.');
 
+    saveGame(game);
     res.send(game.endTurn(playerName));
-    await saveGame(game);
   } catch (err) {
     console.log(err);
     res.status(400).send(err.message);
   }
 });
 
-app.get('/rules/:id', async (req, res) => {
+app.get('/rules/:id', (req, res) => {
   const { id } = req.params;
   const gameId = id.toUpperCase();
-  const game = await getGame(gameId);
+  const game = getGame(gameId);
 
   res.send(game?.rules);
 });
 
-app.post('/rules/:id/:name', async (req, res) => {
+app.post('/rules/:id/:name', (req, res) => {
   const { id, name } = req.params;
 
   if (!name.match(letters)) return res.status(400).send('Name can only contain letters.');
@@ -361,12 +381,12 @@ app.post('/rules/:id/:name', async (req, res) => {
   const playerName = name.toUpperCase();
 
   try {
-    const game = await getGame(gameId);
+    const game = getGame(gameId);
 
     if (!game) throw Error('Game does not exist.');
 
+    saveGame(game);
     res.send(game.setRules(playerName, req.body));
-    await saveGame(game);
   } catch (err) {
     console.log(err);
     res.status(400).send(err.message);

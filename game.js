@@ -180,6 +180,7 @@ module.exports = class Game {
     }
 
     this.id = Math.random().toString(36).substr(2, 4).toUpperCase();
+    this.lastTime = +new Date();
     this.creator = creatorName;
     this.version = uuid();
     this.started = false;
@@ -218,6 +219,7 @@ module.exports = class Game {
   get snapshot() {
     return {
       id: this.id,
+      lastTime: this.lastTime,
       creator: this.creator,
       version: this.version,
       started: this.started,
@@ -349,6 +351,7 @@ module.exports = class Game {
 
   set version(version) {
     this._version = version;
+    this.lastTime = +new Date();
   }
 
   get winners() {
